@@ -1,6 +1,5 @@
 <template>
   <div id="app">
-    <audio src="//172.19.26.244:8090/api/GetAudio/6a50edd22dbf9684ac89676bde079522" autoplay loop controls />
     <router-view v-if="visiable"/>
   </div>
 </template>
