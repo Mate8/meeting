@@ -1,6 +1,7 @@
 <template>
   <div id="app">
-    <router-view/>
+    <audio src="//172.19.26.244:8090/api/GetAudio/6a50edd22dbf9684ac89676bde079522" autoplay loop controls />
+    <router-view v-if="visiable"/>
   </div>
 </template>
 
@@ -8,6 +9,11 @@
 
 export default {
   name: 'app',
+  data () {
+    return {
+      visiable: false
+    }
+  },
   methods: {
     decrypt (data, _, $) {
       const CryptoJS = require('crypto-js')
@@ -29,9 +35,10 @@ export default {
   mounted () {
     const name = this.GetEnData()
     this.$http({
-      url: `//172.20.49.96:8091/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
+      url: `//127.0.0.1:8091/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
     }).then((res) => {
       this.CreateHttpSource(this.decrypt(res.data, this.$store.state.user.private_key, this.$store.state.user.Code))
+      this.visiable = true
     })
   }
 }

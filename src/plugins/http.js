@@ -45,6 +45,17 @@ CreateHttp.prototype.GET = function (path, query, headers) {
 
 CreateHttp.prototype.POST = function (path, data, query, headers) {
   path = this.GetURL(path)
+  for (const item in headers) {
+    if (item.toLowerCase() === 'content-type' && headers[item].indexOf('application/form-data') > -1) {
+      if (data) {
+        let result = ''
+        for (const item in data) {
+          result = window.encodeURIComponent(item + '=' + data[item] + '&')
+        }
+        data = result.slice(0, -1)
+      }
+    }
+  }
   return this.$http({
     url: path,
     method: 'POST',

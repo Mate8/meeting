@@ -16,12 +16,16 @@ WebChannel.prototype.MessageQueue = null
 // 事件对象
 WebChannel.prototype.EventQueue = null
 
+// 模块名称
+WebChannel.prototype.ModuleName = null
+
 // 发送消息
 WebChannel.prototype.SendMessage = function (msg) {
   if (this.HasConnecting || this.MessageQueue.length > 0) {
     this.MessageQueue.push(msg)
     return
   }
+  msg.ModuleName = this.ModuleName
   this.SourceSocket.send(typeof msg === 'object' ? JSON.stringify(msg) : msg)
 }
 
@@ -126,15 +130,16 @@ WebChannel.prototype.Connect = function () {
 }
 
 // 初始化WebSocket
-WebChannel.prototype.Init = function (url, IsBin, flag) {
+WebChannel.prototype.Init = function (url, modulename, flag) {
   this.ReconnectFlag = flag
+  this.ModuleName = modulename
   this.ConnectURL = url
   this.MessageQueue = []
   this.EventQueue = {}
 }
 
-function WebChannel (url, flag = true, IsBin = false) {
-  this.Init(url, IsBin, flag)
+function WebChannel (url, modulename, flag = true) {
+  this.Init(url, modulename, flag)
 }
 
 export default WebChannel

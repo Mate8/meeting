@@ -19,9 +19,9 @@ function CreateToken (round_num) {
   const date = new Date()
   date.setMilliseconds(0)
   // eslint-disable-next-line camelcase
-  _.update(parseInt(date.getTime() / 1000).toString() + round_num)
+  _.update(parseInt(date.getTime() / 1000).toString() + round_num.toString())
   // eslint-disable-next-line camelcase
-  $.update(parseInt(date.getTime() / 1000).toString() + round_num)
+  $.update(parseInt(date.getTime() / 1000).toString() + round_num.toString())
   const result = _.digest('hex').slice(0, 16) + $.digest('hex').slice(32, 48)
   new Array(4).fill(true).forEach((_, index) => {
     index++
@@ -37,7 +37,6 @@ function CreateToken (round_num) {
       result_list.push(result.slice(0, 16) + Math.abs(parseInt(firstsum | secondsum)) + result.slice(16))
     })
   })
-
   // eslint-disable-next-line camelcase
   return result_list
 }
@@ -57,7 +56,7 @@ Vue.prototype.CreateHttpSource = function ($) {
   if (JSON.parse($).websocket_url) {
     const $ws = new WebChannel(`ws://${JSON.parse($).websocket_url}`, true, true)
     $ws.CreateEvent('open', () => {
-      $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code).join(','), type: 'screen' })
+      $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code).join(','), type: 'screen', ModuleName: 'meeting' })
     })
     $ws.Connect()
     Vue.prototype.$ws = $ws
