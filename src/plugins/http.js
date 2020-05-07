@@ -90,6 +90,7 @@ CreateHttp.prototype.ReloadRequestPath = function (paths, flag) {
 export default function CreateHttp (baseurl, RequestPath) {
   this.RequestPath = RequestPath
   this.$http = axios.create({
-    baseURL: baseurl
+    baseURL: baseurl,
+    withCredentials: true
   })
 }
