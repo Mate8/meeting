@@ -34,7 +34,7 @@ export default {
   mounted () {
     const name = this.GetEnData()
     this.$http({
-      url: `//127.0.0.1:8091/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
+      url: `//172.20.40.210:8080/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
     }).then((res) => {
       this.CreateHttpSource(this.decrypt(res.data, this.$store.state.user.private_key, this.$store.state.user.Code))
       this.visiable = true

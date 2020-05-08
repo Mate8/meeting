@@ -10,14 +10,12 @@ import { urls } from './plugins/urls'
 const axios = require('axios')
 
 // eslint-disable-next-line camelcase
-function CreateToken (round_num) {
+function CreateToken (round_num, date) {
   // eslint-disable-next-line camelcase
   const result_list = []
   const consttable = { 0: 0, 1: 1, 2: 2, 3: 3, 4: 4, 5: 5, 6: 6, 7: 7, 8: 8, 9: 9, a: 10, b: 11, c: 12, d: 13, e: 14, f: 15 }
   const _ = require('crypto').createHash('md5')
   const $ = require('crypto').createHash('sha256')
-  const date = new Date()
-  date.setMilliseconds(0)
   // eslint-disable-next-line camelcase
   _.update(parseInt(date.getTime() / 1000).toString() + round_num.toString())
   // eslint-disable-next-line camelcase
@@ -48,15 +46,22 @@ Vue.config.productionTip = false
 // 创建HTTP请求源
 Vue.prototype.CreateHttpSource = function ($) {
   const $http = new CreateHttp(`//${JSON.parse($).request_url}`, urls)
+  let time = JSON.parse($).date
+  let date = new Date(time * 1000)
+  setInterval(() => {
+    date = new Date(time * 1000)
+    date.setMilliseconds(0)
+    time++
+  }, 1000)
   $http.SetRequestInter((config) => {
-    config.headers.common.token = CreateToken(JSON.parse($).code).join(',')
+    config.headers.common.token = CreateToken(JSON.parse($).code, date).join(',')
     config.headers.common['X-Requested-With'] = 'XMLHttpRequest'
     return config
   })
   if (JSON.parse($).websocket_url) {
     const $ws = new WebChannel(`ws://${JSON.parse($).websocket_url}`, true, true)
     $ws.CreateEvent('open', () => {
-      $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code).join(','), type: 'screen', ModuleName: 'meeting' })
+      $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code, date).join(','), type: 'screen', ModuleName: 'meeting' })
     })
     $ws.Connect()
     Vue.prototype.$ws = $ws
