@@ -59,11 +59,10 @@ Vue.prototype.CreateHttpSource = function ($) {
     return config
   })
   if (JSON.parse($).websocket_url) {
-    const $ws = new WebChannel(`ws://${JSON.parse($).websocket_url}`, true, true)
+    const $ws = new WebChannel(`ws://${JSON.parse($).websocket_url}`, store.state.user.ModuleName, true)
     $ws.CreateEvent('open', () => {
-      $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code, date).join(','), type: 'screen', ModuleName: 'meeting' })
+      $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code, date).join(','), type: $ws.UserType, ModuleName: store.state.user.ModuleName })
     })
-    $ws.Connect()
     Vue.prototype.$ws = $ws
   }
   Vue.prototype.$http = $http

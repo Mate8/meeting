@@ -19,6 +19,9 @@ WebChannel.prototype.EventQueue = null
 // 模块名称
 WebChannel.prototype.ModuleName = null
 
+// 模块担当角色类型
+WebChannel.prototype.UserType = null
+
 // 发送消息
 WebChannel.prototype.SendMessage = function (msg) {
   if (this.HasConnecting || this.MessageQueue.length > 0) {
@@ -26,7 +29,13 @@ WebChannel.prototype.SendMessage = function (msg) {
     return
   }
   msg.ModuleName = this.ModuleName
+  msg.type = this.UserType
   this.SourceSocket.send(typeof msg === 'object' ? JSON.stringify(msg) : msg)
+}
+
+// 设置模块担当角色类型
+WebChannel.prototype.SetUserType = function (type) {
+  this.UserType = type
 }
 
 // 方法工厂
@@ -76,7 +85,7 @@ WebChannel.prototype.RemoveEvent = function () {
 }
 
 // 绑定事件
-WebChannel.prototype.BindEvent = function () {
+WebChannel.prototype.BindEvent = function (callback) {
   this.SourceSocket.addEventListener('error', () => {
     if (this.ReconnectFlag && !this.HasConnecting) {
       this.HasConnecting = true
@@ -87,6 +96,7 @@ WebChannel.prototype.BindEvent = function () {
   this.SourceSocket.addEventListener('open', (e) => {
     if (this.SourceSocket.readyState === 1) {
       console.warn('连接成功')
+      callback(e)
       // 调用连接成功钩子
       if (this.EventQueue.open) {
         this.EventQueue.open.ComputFunction(e)
@@ -100,6 +110,11 @@ WebChannel.prototype.BindEvent = function () {
         reslove()
       }).then(() => {
         this.HasConnecting = false
+      })
+      this.SourceSocket.addEventListener('message', (e) => {
+        if (this.EventQueue[JSON.parse(e.data).type]) {
+          this.EventQueue[JSON.parse(e.data).type].ComputFunction(e)
+        }
       })
       this.SourceSocket.addEventListener('close', (e) => {
         if (this.ReconnectFlag && !this.HasConnecting) {
@@ -123,10 +138,10 @@ WebChannel.prototype.Close = function () {
 }
 
 // 尝试连接方法
-WebChannel.prototype.Connect = function () {
+WebChannel.prototype.Connect = function (callback) {
   this.SourceSocket = new WebSocket(this.ConnectURL)
   this.SourceSocket.binaryType = 'arraybuffer'
-  this.BindEvent()
+  this.BindEvent(callback)
 }
 
 // 初始化WebSocket

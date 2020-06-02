@@ -33,12 +33,21 @@ export default {
   },
   mounted () {
     const name = this.GetEnData()
-    this.$http({
-      url: `//172.20.40.210:8080/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
-    }).then((res) => {
-      this.CreateHttpSource(this.decrypt(res.data, this.$store.state.user.private_key, this.$store.state.user.Code))
-      this.visiable = true
-    })
+    for (let i = 0; i < 5000; i++) {
+      this.$http({
+        url: `//172.20.49.96:8091/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
+      }).then((res) => {
+        // this.CreateHttpSource(this.decrypt(res.data, this.$store.state.user.private_key, this.$store.state.user.Code))
+        // this.$ws.SetUserType(this.$route.meta.userType)
+        // this.$ws.Connect(() => {
+        //   this.visiable = true
+        // })
+      })
+    }
+    // const axios = require('axios')
+    // for(let i = 0;i < 1000;i++){
+
+    // }
   }
 }
 </script>
