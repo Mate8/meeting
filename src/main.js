@@ -45,7 +45,7 @@ Vue.config.productionTip = false
 
 // 创建HTTP请求源
 Vue.prototype.CreateHttpSource = function ($) {
-  const $http = new CreateHttp(`//${JSON.parse($).request_url}`, urls)
+  const $http = new CreateHttp(`${JSON.parse($).request_url}`, urls)
   let time = JSON.parse($).date
   let date = new Date(time * 1000)
   setInterval(() => {
@@ -59,7 +59,7 @@ Vue.prototype.CreateHttpSource = function ($) {
     return config
   })
   if (JSON.parse($).websocket_url) {
-    const $ws = new WebChannel(`ws://${JSON.parse($).websocket_url}`, store.state.user.ModuleName, true)
+    const $ws = new WebChannel(`${JSON.parse($).websocket_url}`, store.state.user.ModuleName, true)
     $ws.CreateEvent('open', () => {
       $ws.SendMessage({ code: 0, tokens: CreateToken(JSON.parse($).code, date).join(','), type: $ws.UserType, ModuleName: store.state.user.ModuleName })
     })

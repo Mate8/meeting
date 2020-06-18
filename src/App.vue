@@ -33,21 +33,15 @@ export default {
   },
   mounted () {
     const name = this.GetEnData()
-    for (let i = 0; i < 5000; i++) {
-      this.$http({
-        url: `//172.20.49.96:8091/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
-      }).then((res) => {
-        // this.CreateHttpSource(this.decrypt(res.data, this.$store.state.user.private_key, this.$store.state.user.Code))
-        // this.$ws.SetUserType(this.$route.meta.userType)
-        // this.$ws.Connect(() => {
-        //   this.visiable = true
-        // })
+    this.$http({
+      url: (process.env.NODE_ENV === 'production' ? 'https://38.145.205.142' : 'https://172.19.23.157:8085') + `/api/GetBaseUrl/${name}/${this.$store.state.user.ModuleName}`
+    }).then((res) => {
+      this.CreateHttpSource(this.decrypt(res.data, this.$store.state.user.private_key, this.$store.state.user.Code))
+      this.$ws.SetUserType(this.$route.meta.userType)
+      this.$ws.Connect(() => {
+        this.visiable = true
       })
-    }
-    // const axios = require('axios')
-    // for(let i = 0;i < 1000;i++){
-
-    // }
+    })
   }
 }
 </script>
